@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.azmalakhtar.todo.model.Todo;
 import com.azmalakhtar.todo.model.TodoDto;
+import com.azmalakhtar.todo.model.TodoRequestDto;
+import com.azmalakhtar.todo.model.TodoResponseDto;
 import com.azmalakhtar.todo.repository.TodoRepository;
 import com.azmalakhtar.todo.service.TodoService;
 
@@ -29,68 +31,45 @@ public class TodoController {
 	}
 
 	@PostMapping("/todos")
-	public ResponseEntity<TodoDto> createTodo(@RequestBody @Validated TodoDto todoDto, Authentication authentication) {
-		TodoDto todo = service.create(authentication.getName(), todoDto);
+	public ResponseEntity<TodoResponseDto> createTodo(@RequestBody @Validated TodoRequestDto requestDto, Authentication authentication) {
+		TodoResponseDto responseDto = service.create(authentication.getName(), requestDto);
 		return ResponseEntity.status(HttpStatus.CREATED)
-			.body(todo);
-	}
-
-	/*
-	@GetMapping("/todos")
-	public List<Todo> getAllTodos() {
-		return repository.findAll();
+			.body(responseDto);
 	}
 
 	@GetMapping("/todos/{id}")
-	public ResponseEntity<Todo> getTodoById(@PathVariable Long id) {
-		Optional<Todo> todo = repository.findById(id);
-		if (todo.isEmpty()) {
-			return ResponseEntity
-					.status(HttpStatus.NOT_FOUND)
-					.body(null);
-		}
+	public ResponseEntity<TodoResponseDto> getTodoById(@PathVariable Long id, Authentication authentication) {
+		TodoResponseDto responseDto = service.getById(authentication.getName(), id);
 		return ResponseEntity
 				.status(HttpStatus.OK)
-				.body(todo.get());
+				.body(responseDto);
+	}
+
+	@GetMapping("/todos")
+	public ResponseEntity<List<TodoResponseDto>> getAllTodos(Authentication authentication) {
+		List<TodoResponseDto> responseDtos = service.getAll(authentication.getName());
+		return ResponseEntity.status(HttpStatus.OK)
+			.body(responseDtos);
+	}
+
+	@DeleteMapping("/todos/{id}")
+	public ResponseEntity<Void> deleteTodo(@PathVariable Long id, Authentication authentication) {
+		service.deleteById(authentication.getName(), id);
+		return ResponseEntity.noContent().build(); 
 	}
 
 
 	@PatchMapping("/todos/{id}")
-	public ResponseEntity<Todo> updateTodo(@RequestBody Todo todo, @PathVariable Long id) {
-		Optional<Todo> oldTodoOptional = repository.findById(id);
-		if (oldTodoOptional.isEmpty()) {
-			return ResponseEntity
-					.status(HttpStatus.NOT_FOUND)
-					.body(null);
-		}
-		Todo oldTodo = oldTodoOptional.get();
-		if (todo.getTitle() != null)
-			oldTodo.setTitle(todo.getTitle());
-		if (todo.getDescription() != null)
-			oldTodo.setDescription(todo.getDescription());
-		if (todo.getDueDate() != null)
-			oldTodo.setDueDate(todo.getDueDate());
-		if (todo.getIsDone() != null)
-			oldTodo.setIsDone(todo.getIsDone());
-		if (todo.getIsUrgent() != null)
-			oldTodo.setIsUrgent(todo.getIsUrgent());
-		if (todo.getIsImportant() != null)
-			oldTodo.setIsImportant(todo.getIsImportant());
-
-		repository.save(oldTodo);
-		return ResponseEntity
-				.status(HttpStatus.OK)
-				.body(oldTodo);
+	public ResponseEntity<TodoResponseDto> updateTodo(
+		@RequestBody TodoRequestDto requestDto, @PathVariable Long id, Authentication authentication
+	) {
+		TodoResponseDto responseDto = service.update(authentication.getName(), id, requestDto);
+		return ResponseEntity.status(HttpStatus.OK)
+			.body(responseDto);
 	}
 
-	@DeleteMapping("/todos/{id}")
-	public void deleteTodo(@PathVariable Long id) {
-		repository.deleteById(id);
+	@DeleteMapping("/todos")
+	public void deleteAll(Authentication authentication) {
+		service.deleteAll(authentication.getName());
 	}
-
-	@DeleteMapping("/todos/all")
-	public void deleteAll() {
-		repository.deleteAll();
-	}
-	*/
 }

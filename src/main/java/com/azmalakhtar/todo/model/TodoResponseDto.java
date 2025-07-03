@@ -2,12 +2,9 @@ package com.azmalakhtar.todo.model;
 
 import java.time.LocalDate;
 
-import jakarta.validation.constraints.NotEmpty;
-
-public record TodoDto(
-	@NotEmpty
+public record TodoResponseDto (
+	Long id,
 	String title,
-	@NotEmpty
 	String description,
 	LocalDate dueDate,
 	Boolean isDone,
