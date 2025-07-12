@@ -51,7 +51,9 @@ public class SecurityConfig {
 				.cors(Customizer.withDefaults())
 				.csrf(customizer -> customizer.disable())
 				.authorizeHttpRequests(request -> request
-						.requestMatchers("/register", "/login", "/v3/api-docs", "/v3/api-docs.yaml", "/swagger-ui/index.html").permitAll()
+						.requestMatchers("/register", "/login", "/v3/api-docs",
+								"/v3/api-docs.yaml", "/swagger-ui/index.html")
+						.permitAll()
 						.anyRequest().authenticated())
 				.httpBasic(Customizer.withDefaults())
 				.sessionManagement(session -> session
@@ -63,7 +65,8 @@ public class SecurityConfig {
 	@Bean
 	public CorsConfigurationSource corsConfigurationSource() {
 		CorsConfiguration config = new CorsConfiguration();
-		config.setAllowedOrigins(List.of("http://localhost:5173")); // frontend origin
+
+		config.setAllowedOrigins(List.of("https://todosveltekit.netlify.app")); // frontend origin
 		config.setAllowedMethods(List.of("*"));
 		config.setAllowedHeaders(List.of("*"));
 		config.setAllowCredentials(true);
