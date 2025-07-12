@@ -2,6 +2,7 @@ package com.azmalakhtar.todo.model;
 
 import java.time.LocalDate;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -24,12 +25,16 @@ public class Todo {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
+	@Column(nullable = false)
 	private String title;
 	private String description;
 	private LocalDate dueDate;
-	private Boolean isDone;
-	private Boolean isUrgent;
-	private Boolean isImportant;
+	@Column(nullable = false)
+	private Boolean isDone = false;
+	@Column(nullable = false)
+	private Boolean isUrgent = false;
+	@Column(nullable = false)
+	private Boolean isImportant = false;
 	@ManyToOne
 	@JoinColumn(name = "todo_user_id")
 	private TodoUser todoUser;

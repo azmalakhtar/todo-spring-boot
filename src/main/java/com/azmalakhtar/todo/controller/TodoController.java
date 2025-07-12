@@ -1,7 +1,7 @@
 package com.azmalakhtar.todo.controller;
 
+import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,11 +15,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.azmalakhtar.todo.model.Todo;
-import com.azmalakhtar.todo.model.TodoDto;
 import com.azmalakhtar.todo.model.TodoRequestDto;
 import com.azmalakhtar.todo.model.TodoResponseDto;
-import com.azmalakhtar.todo.repository.TodoRepository;
 import com.azmalakhtar.todo.service.TodoService;
 
 @RestController
@@ -31,10 +28,11 @@ public class TodoController {
 	}
 
 	@PostMapping("/todos")
-	public ResponseEntity<TodoResponseDto> createTodo(@RequestBody @Validated TodoRequestDto requestDto, Authentication authentication) {
+	public ResponseEntity<TodoResponseDto> createTodo(@RequestBody @Validated TodoRequestDto requestDto,
+			Authentication authentication) {
 		TodoResponseDto responseDto = service.create(authentication.getName(), requestDto);
 		return ResponseEntity.status(HttpStatus.CREATED)
-			.body(responseDto);
+				.body(responseDto);
 	}
 
 	@GetMapping("/todos/{id}")
@@ -45,27 +43,38 @@ public class TodoController {
 				.body(responseDto);
 	}
 
+	@GetMapping("/todos/date/{dueDate}")
+	public ResponseEntity<List<TodoResponseDto>> getTodosByDueDate(@PathVariable LocalDate dueDate,
+			Authentication authentication) {
+		return ResponseEntity.status(HttpStatus.OK)
+				.body(service.getAllOfDueDate(dueDate, authentication.getName()));
+	}
+
+	@GetMapping("/todos/unscheduled")
+	public ResponseEntity<List<TodoResponseDto>> getUnscheduled(Authentication authentication) {
+		return ResponseEntity.status(HttpStatus.OK)
+				.body(service.getAllOfDueDate(null, authentication.getName()));
+	}
+
 	@GetMapping("/todos")
 	public ResponseEntity<List<TodoResponseDto>> getAllTodos(Authentication authentication) {
 		List<TodoResponseDto> responseDtos = service.getAll(authentication.getName());
 		return ResponseEntity.status(HttpStatus.OK)
-			.body(responseDtos);
+				.body(responseDtos);
 	}
 
 	@DeleteMapping("/todos/{id}")
 	public ResponseEntity<Void> deleteTodo(@PathVariable Long id, Authentication authentication) {
 		service.deleteById(authentication.getName(), id);
-		return ResponseEntity.noContent().build(); 
+		return ResponseEntity.noContent().build();
 	}
-
 
 	@PatchMapping("/todos/{id}")
 	public ResponseEntity<TodoResponseDto> updateTodo(
-		@RequestBody TodoRequestDto requestDto, @PathVariable Long id, Authentication authentication
-	) {
+			@RequestBody TodoRequestDto requestDto, @PathVariable Long id, Authentication authentication) {
 		TodoResponseDto responseDto = service.update(authentication.getName(), id, requestDto);
 		return ResponseEntity.status(HttpStatus.OK)
-			.body(responseDto);
+				.body(responseDto);
 	}
 
 	@DeleteMapping("/todos")

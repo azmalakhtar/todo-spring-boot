@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Test Report</title>
+    <style>
+        body {
+    font-family: "Helvetica Neue", Arial, sans-serif;
+    font-size: 1.125rem;
+    line-height: 1.4;
+}
+
+.container {
+    max-width: 1200px;
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+h2 {
+    color: #ff0288;
+    font-size: 2.5rem;
+}
+
+.summary {
+    margin: 32px 0 32px 0;
+    font-size: 1.25rem;
+}
+
+a {
+    color: royalblue;
+}
+
+@media (prefers-color-scheme: dark) {
+    a {
+        color: #34a7ff;
+    }
+}
+
+.date {
+    margin-bottom: 20px;
+}
+
+td {
+    padding: 4px 8px 4px 0;
+}
+
+thead {
+    font-weight: bold;
+}
+
+.success, .success a {
+    color: green;
+}
+
+.failure, .failure a {
+    color: red;
+}
+
+@media (prefers-color-scheme: dark) {
+    body {
+        background-color: #19191c;
+        color: #c2c2c2;
+    }
+}
+
+    </style>
+</head>
+<body>
+<div class="container">
+    <h2>Report</h2>
+    <div class="summary">
+        <div class="date">Wed, 9 Jul 2025 16:54:22 +0530</div>
+        <div class="count">Executed: 1 (100%)</div>
+        <div class="count">Succeeded: 0 (0.0%)</div>
+        <div class="count">Failed: 1 (100.0%)</div>
+    </div>
+    <table>
+        <thead>
+        <td>File</td>
+        <td>Status</td>
+        <td>Start Time</td>
+        <td>Duration</td>
+        </thead>
+        <tbody>
+        <tr data-duration="0" data-status="failure" data-filename="register.hurl" data-id="eb606a1b-a111-4ec3-ab4e-1600216a7e4e" data-timestamp="1752060262">
+    <td><a href="store/eb606a1b-a111-4ec3-ab4e-1600216a7e4e-source.html">register.hurl</a></td>
+    <td class="failure"><a href="store/eb606a1b-a111-4ec3-ab4e-1600216a7e4e-timeline.html">failure</a></td>
+    <td>2025-07-09T11:24:22+05:30</td>
+    <td>0</td>
+</tr>
+
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

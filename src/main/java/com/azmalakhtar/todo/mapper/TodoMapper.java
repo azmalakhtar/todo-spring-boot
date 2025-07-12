@@ -14,9 +14,9 @@ public class TodoMapper {
 			requestDto.title(),
 			requestDto.description(),
 			requestDto.dueDate(),
-			requestDto.isDone(),
-			requestDto.isUrgent(),
-			requestDto.isImportant(),
+			requestDto.isDone() != null ? requestDto.isDone() : false,
+			requestDto.isUrgent() != null ? requestDto.isUrgent() : false,
+			requestDto.isImportant() != null ? requestDto.isImportant() : false,
 			null
 		);
 	}

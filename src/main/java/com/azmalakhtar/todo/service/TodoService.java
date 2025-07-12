@@ -1,8 +1,10 @@
 package com.azmalakhtar.todo.service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import com.azmalakhtar.todo.exception.TodoNotFoundException;
@@ -82,10 +84,20 @@ public class TodoService {
 		return mapper.toResponseDto(todo);
 	}
 
+	public List<TodoResponseDto> getAllOfDueDate(LocalDate dueDate, String email) {
+		TodoUser user = userRepository.findByEmail(email).get();
+		List<Todo> todos = todoRepository.findByTodoUserAndDueDate(user, dueDate);
+		List<TodoResponseDto> responseDtos = todos.stream()
+			.map(todo -> mapper.toResponseDto(todo))
+			.toList();
+		return responseDtos;
+	}
+
 	@Transactional
 	public void deleteAll(String email) {
 		TodoUser user = userRepository.findByEmail(email).get();
 		todoRepository.deleteByTodoUser(user);
 	}
+
 
 }

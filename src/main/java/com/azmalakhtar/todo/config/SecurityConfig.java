@@ -5,6 +5,7 @@ import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.context.annotation.Bean;
@@ -25,6 +26,9 @@ import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.jwk.JWKSet;
@@ -41,22 +45,32 @@ public class SecurityConfig {
 		this.userDetailsService = userDetailsService;
 	}
 
-	@Bean 
+	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 		return http
-			.csrf(customizer -> customizer.disable())
-			.authorizeHttpRequests(request -> request
-				.requestMatchers("/register", "/login").permitAll()
-				.anyRequest().authenticated()
-			)
-			.httpBasic(Customizer.withDefaults())
-			.sessionManagement(session -> session
-				.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-			)
-			.oauth2ResourceServer(oauth2 ->
-				oauth2.jwt(Customizer.withDefaults())
-			)
-			.build();
+				.cors(Customizer.withDefaults())
+				.csrf(customizer -> customizer.disable())
+				.authorizeHttpRequests(request -> request
+						.requestMatchers("/register", "/login", "/v3/api-docs", "/v3/api-docs.yaml", "/swagger-ui/index.html").permitAll()
+						.anyRequest().authenticated())
+				.httpBasic(Customizer.withDefaults())
+				.sessionManagement(session -> session
+						.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+				.oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults()))
+				.build();
+	}
+
+	@Bean
+	public CorsConfigurationSource corsConfigurationSource() {
+		CorsConfiguration config = new CorsConfiguration();
+		config.setAllowedOrigins(List.of("http://localhost:5173")); // frontend origin
+		config.setAllowedMethods(List.of("*"));
+		config.setAllowedHeaders(List.of("*"));
+		config.setAllowCredentials(true);
+
+		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+		source.registerCorsConfiguration("/**", config);
+		return source;
 	}
 
 	@Bean
@@ -85,8 +99,8 @@ public class SecurityConfig {
 	@Bean
 	public JwtDecoder jwtDecoder() throws JOSEException {
 		return NimbusJwtDecoder
-			.withPublicKey(rsaKey().toRSAPublicKey())
-			.build();
+				.withPublicKey(rsaKey().toRSAPublicKey())
+				.build();
 	}
 
 	@Bean
@@ -99,9 +113,9 @@ public class SecurityConfig {
 	public RSAKey rsaKey() {
 		KeyPair keyPair = keyPair();
 		return new RSAKey.Builder((RSAPublicKey) keyPair.getPublic())
-			.privateKey((RSAPrivateKey) keyPair.getPrivate())
-			.keyID(UUID.randomUUID().toString())
-			.build();
+				.privateKey((RSAPrivateKey) keyPair.getPrivate())
+				.keyID(UUID.randomUUID().toString())
+				.build();
 	}
 
 	@Bean
@@ -110,7 +124,7 @@ public class SecurityConfig {
 			KeyPairGenerator generator = KeyPairGenerator.getInstance("RSA");
 			generator.initialize(2048);
 			return generator.generateKeyPair();
-		} catch(NoSuchAlgorithmException exception) {
+		} catch (NoSuchAlgorithmException exception) {
 			throw new IllegalStateException("Unable to generate an RSA key pair.");
 		}
 	}

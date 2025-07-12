@@ -7,7 +7,6 @@ import jakarta.validation.constraints.NotEmpty;
 public record TodoRequestDto(
 	@NotEmpty
 	String title,
-	@NotEmpty
 	String description,
 	LocalDate dueDate,
 	Boolean isDone,
